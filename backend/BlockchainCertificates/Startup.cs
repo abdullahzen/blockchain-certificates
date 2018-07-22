@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BlockchainCertificates.Helpers;
+using mantle.lib.Api;
+using mantle.lib.Client;
+using mantle.lib.Model;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
@@ -27,7 +30,14 @@ namespace BlockchainCertificates
         {
             services.AddMvc();
 
-            services.AddSingleton(async mantle => await new Mantle.Services().Init("mantlemail", "mantlepass"));
+            services.AddSingleton(async mantleConfig =>
+            {
+                var config = new Configuration();
+                var auth = new AuthenticationApi("https://api.mantle.services");
+                var userResponse = await auth.AuthenticationLoginPostAsync(new UserLoginRequest("mantleEmail", "mantlePass"));
+                config.AddDefaultHeader("Authorization", userResponse.AccessToken);
+                return config;
+            });
 
             var corsBuilder = new CorsPolicyBuilder();
             corsBuilder.AllowAnyHeader();

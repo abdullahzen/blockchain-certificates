@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="mantle.lib" Version="1.0.5" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.8" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.3" />
     <PackageReference Include="MySql.Data" Version="8.0.11" />
@@ -28,12 +29,6 @@
 
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.4" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Mantle">
-      <HintPath>..\..\..\Mantle\Mantle\bin\Release\netcoreapp2.0\Mantle.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
 </Project>

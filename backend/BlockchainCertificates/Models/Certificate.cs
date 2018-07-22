@@ -12,9 +12,9 @@ namespace BlockchainCertificates.Models
         private string Name { get; }
         private string Program { get; }
         private int Grade { get; }
-        private DateTime Date { get; }
+        private string Date { get; }
 
-        public Certificate(string name, string program, int grade, DateTime date)
+        public Certificate(string name, string program, int grade, string date)
         {
             Name = name;
             Program = program;
@@ -22,14 +22,12 @@ namespace BlockchainCertificates.Models
             Date = date;
         }
 
-        public byte[] GenerateCert()
+        public MemoryStream GenerateCert()
         {
             var image = Converter.ConvertHtmlString(GenerateHtmlTemplate());
-            using (var ms = new MemoryStream())
-            {
-                image.Save(ms, ImageFormat.Png);
-                return ms.ToArray();
-            }
+            var ms = new MemoryStream();
+            image.Save(ms, ImageFormat.Png);
+            return ms;
         }
 
         private string GenerateHtmlTemplate()
@@ -52,7 +50,7 @@ namespace BlockchainCertificates.Models
                     <img style=""position:absolute; left:100px; top:450px; width:250px; height:250px"" 
                         src=""{System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().CodeBase)}/logo.png""/>
                     <span style=""font-size:25px""><i> dated </i></span><br>
-                    <span style=""font-size:30px"">{Date.ToLongDateString()}</span>
+                    <span style=""font-size:30px"">{Date}</span>
                 </div>
                 </div>";
         }

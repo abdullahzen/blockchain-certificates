@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using BlockchainCertificates.Helpers;
 using MySql.Data.MySqlClient;
@@ -16,6 +15,7 @@ namespace BlockchainCertificates.Models
         public string Program { get; set; }
         public int AvgGrade { get; set; }
         public bool CertIssued { get; set; }
+        public string CertIssueDate { get; set; } = "";
 
         public Student ChangeProgram(string program)
         {
@@ -25,12 +25,12 @@ namespace BlockchainCertificates.Models
 
         public async Task<Student> Save()
         {
-            return await SetDb("INSERT INTO student(id,firstname,lastname,imageUrl,program,avgGrade,certIssued) VALUES(?id,?firstname,?lastname,?imageUrl,?program,?avgGrade,?certIssued)");
+            return await SetDb("INSERT INTO student(id,firstname,lastname,imageUrl,program,avgGrade,certIssued,certIssueDate) VALUES(?id,?firstname,?lastname,?imageUrl,?program,?avgGrade,?certIssued,?certIssueDate)");
         }
 
         public async Task<Student> Update()
         {
-            return await SetDb("UPDATE student SET firstname=?firstname, lastname=?lastname, imageUrl=?imageUrl, program=?program, avgGrade=?avgGrade, certIssued=?certIssued WHERE id = ?id");
+            return await SetDb("UPDATE student SET firstname=?firstname, lastname=?lastname, imageUrl=?imageUrl, program=?program, avgGrade=?avgGrade, certIssued=?certIssued, certIssueDate=?certIssueDate WHERE id = ?id");
         }
 
         public static async Task<Student> Get(string studentId)
@@ -58,6 +58,7 @@ namespace BlockchainCertificates.Models
                 cmd.Parameters.Add("?program", MySqlDbType.VarChar).Value = Program;
                 cmd.Parameters.Add("?avgGrade", MySqlDbType.Int16).Value = AvgGrade;
                 cmd.Parameters.Add("?certIssued", MySqlDbType.Bit).Value = CertIssued;
+                cmd.Parameters.Add("?certIssueDate", MySqlDbType.VarChar).Value = CertIssueDate;
                 await cmd.ExecuteNonQueryAsync();
                 return this;
             }
@@ -88,7 +89,8 @@ namespace BlockchainCertificates.Models
                         ImageUrl = (string)reader[3],
                         Program = (string)reader[4],
                         AvgGrade = (int)reader[5],
-                        CertIssued = (bool)reader[6]
+                        CertIssued = (bool)reader[6],
+                        CertIssueDate = (string)reader[7]
                     });
                 }
                 reader.Close();

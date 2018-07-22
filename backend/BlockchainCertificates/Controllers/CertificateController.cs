@@ -1,14 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using BlockchainCertificates.Models;
+using mantle.lib.Api;
+using mantle.lib.Client;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Net.Http.Headers;
 
 namespace BlockchainCertificates.Controllers
 {
@@ -16,14 +15,13 @@ namespace BlockchainCertificates.Controllers
     [Route("api/certificate")]
     public class CertificateController : Controller
     {
-        private const string FolderId = "5b2075bfba18c95e507cbe6b";
-        private const string FolderName = "certificates";
-        private const double Accuracy = 95;
-        private readonly Mantle.Services _mantle;
+        private const string FolderId = "5b54e0bfd9c54a000ac3bfd2";
+        private const int Accuracy = 95;
+        private readonly KeeperApi _mantleKeeper;
 
-        public CertificateController(Task<Mantle.Services> mantle)
+        public CertificateController(Task<Configuration> mantleConfig)
         {
-            _mantle = mantle.Result;
+            _mantleKeeper = new KeeperApi(mantleConfig.Result);
         }
 
         [HttpGet("issue/{studentId}")]
@@ -35,11 +33,19 @@ namespace BlockchainCertificates.Controllers
                 return BadRequest("Certificate already issued");
             }
 
-            var cert = new Certificate($"{student.FirstName} {student.LastName}", student.Program, student.AvgGrade, DateTime.Now).GenerateCert();
-            await _mantle.FileManager.Upload(FolderId, student.Id, "certificate.bin", cert, Accuracy);
+            student.CertIssued = true;
+            student.CertIssueDate = DateTime.Now.ToLongDateString();
 
-            FileResult fileResult = new FileContentResult(cert, "image/png");
-            return Ok(fileResult);
+            var certificate = new Certificate($"{student.FirstName} {student.LastName}", student.Program, student.AvgGrade, student.CertIssueDate);
+            using (var certificateStream = certificate.GenerateCert())
+            {
+                await _mantleKeeper.KeeperFilesPostAsync(FolderId, certificateStream, $"{student.Id}.bin", Accuracy);
+
+                await student.Update();
+
+                FileResult fileResult = new FileContentResult(certificateStream.ToArray(), "image/png");
+                return Ok(fileResult);
+            }
         }
 
         [HttpGet("reissue/{studentId}")]
@@ -48,25 +54,27 @@ namespace BlockchainCertificates.Controllers
             var student = await Student.Get(studentId);
             if (!student.CertIssued)
             {
-                return BadRequest("Student not graduated");
+                return BadRequest("Certificate never issued before");
             }
 
-            var cert = new Certificate($"{student.FirstName} {student.LastName}", student.Program, student.AvgGrade, DateTime.Now).GenerateCert();
+            var certificate = new Certificate($"{student.FirstName} {student.LastName}", student.Program, student.AvgGrade, student.CertIssueDate);
+            using (var certificateStream = certificate.GenerateCert())
+            {
+                var exists = await _mantleKeeper.KeeperFilesExistPostAsync(FolderId, certificateStream, Accuracy);
 
-            var exists = await _mantle.FileManager.Exists(FolderId, "certificate.bin", cert, Accuracy);
-
-            FileResult fileResult = new FileContentResult(cert, "image/png");
-            return exists ? (IActionResult)Ok(fileResult) : BadRequest("Certificate never issued before");
+                FileResult fileResult = new FileContentResult(certificateStream.ToArray(), "image/png");
+                return exists.Value ? (IActionResult)Ok(fileResult) : BadRequest("Certificate never issued before");
+            }
         }
 
         [HttpPost("verify")]
         public async Task<bool> VerifyCertificate([FromForm]VerifyRequest request)
         {
-            using (var ms = new MemoryStream())
+            using (var memoryStream = new MemoryStream())
             {
-                await request.File.CopyToAsync(ms);
-                var binaryCert = ms.ToArray();
-                return await _mantle.FileManager.Exists(FolderName, "certificate.bin", binaryCert, Accuracy);
+                await request.File.CopyToAsync(memoryStream);
+                var isValidCertificate = await _mantleKeeper.KeeperFilesExistPostAsync(FolderId, memoryStream, Accuracy);
+                return isValidCertificate ?? false;
             }
         }
 

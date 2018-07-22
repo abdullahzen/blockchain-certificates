@@ -87,6 +87,7 @@ CREATE TABLE `student` (
   `program` varchar(45) NOT NULL,
   `avgGrade` int(11) NOT NULL,
   `certIssued` tinyint(1) NOT NULL DEFAULT '0',
+  `certIssueDate` varchar(45) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -97,7 +98,7 @@ CREATE TABLE `student` (
 
 LOCK TABLES `student` WRITE;
 /*!40000 ALTER TABLE `student` DISABLE KEYS */;
-INSERT INTO `student` VALUES ('09a52661-9f65-4e8c-b81b-68318dd819be','Gabriel','Bottari','https://media.licdn.com/dms/image/C5603AQFrkBvhVGp5Sg/profile-displayphoto-shrink_200_200/0?e=1534377600&v=beta&t=EqqVkZLbiJLxTGaXhekh5vnrzrD5p3P6GlTgV9GpJJQ','Software Engineering',78,0),('0b2db115-7f2c-40e2-b68e-6584e8f29c17','Martin','Grogan','https://media.licdn.com/dms/image/C4E03AQHN1TETLDA2Cw/profile-displayphoto-shrink_800_800/0?e=1534377600&v=beta&t=k58fV-QKQV8ZsSCQhtl6F0nLF8FmZtNPtplrSMV7CCI','Computer Science',89,0),('2f87412e-30a4-4ecb-ba74-2acabe5d087d','Pascal','Leblanc','https://media.licdn.com/dms/image/C5603AQF72cLe2sQVLg/profile-displayphoto-shrink_800_800/0?e=1534377600&v=beta&t=rYalvNur7p8E5IZgNGUJXyyv-AE93IIOxInVMY1brXY','Computer Science',76,0),('afbc50b2-0827-4125-abf2-0b05f0d402ff','Simon','Lacoursiere','https://media.licdn.com/dms/image/C5603AQGaXE74aPfyZg/profile-displayphoto-shrink_800_800/0?e=1534377600&v=beta&t=PUPuoFTfwZkRvaMXNYv8kP4sPvpB5nIuDI1KSAQ1-X8','Computer Science',56,0),('d056dd3d-d1cb-444b-a4b4-57f652e998aa','Arnaud','Gorain','https://media.licdn.com/dms/image/C4E03AQGxjS1fV1z5zg/profile-displayphoto-shrink_800_800/0?e=1534377600&v=beta&t=5hoPXTLvk73VuYWc1lbC0XY7Enowu-0rSaDgS7GjFIY','Software Engineering',92,0),('f557c42a-3e17-4498-bdbe-2663f3092099','Yann','Thibodeau','https://media.licdn.com/dms/image/C4E03AQFtS6wNRrC3bg/profile-displayphoto-shrink_800_800/0?e=1534377600&v=beta&t=7Jr2wfBxCvTR0Y4YCNK4DTcyIaSM9VGNLFPjq9z1Y7M','Computer Science',100,0);
+INSERT INTO `student` VALUES ('09a52661-9f65-4e8c-b81b-68318dd819be','Gabriel','Bottari','https://media.licdn.com/dms/image/C5603AQFrkBvhVGp5Sg/profile-displayphoto-shrink_200_200/0?e=1534377600&v=beta&t=EqqVkZLbiJLxTGaXhekh5vnrzrD5p3P6GlTgV9GpJJQ','Software Engineering',78,0,''),('0b2db115-7f2c-40e2-b68e-6584e8f29c17','Martin','Grogan','https://media.licdn.com/dms/image/C4E03AQHN1TETLDA2Cw/profile-displayphoto-shrink_800_800/0?e=1534377600&v=beta&t=k58fV-QKQV8ZsSCQhtl6F0nLF8FmZtNPtplrSMV7CCI','Computer Science',89,0,''),('2f87412e-30a4-4ecb-ba74-2acabe5d087d','Pascal','Leblanc','https://media.licdn.com/dms/image/C5603AQF72cLe2sQVLg/profile-displayphoto-shrink_800_800/0?e=1534377600&v=beta&t=rYalvNur7p8E5IZgNGUJXyyv-AE93IIOxInVMY1brXY','Computer Science',76,0,''),('afbc50b2-0827-4125-abf2-0b05f0d402ff','Simon','Lacoursiere','https://media.licdn.com/dms/image/C5603AQGaXE74aPfyZg/profile-displayphoto-shrink_800_800/0?e=1534377600&v=beta&t=PUPuoFTfwZkRvaMXNYv8kP4sPvpB5nIuDI1KSAQ1-X8','Computer Science',56,0,''),('d056dd3d-d1cb-444b-a4b4-57f652e998aa','Arnaud','Gorain','https://media.licdn.com/dms/image/C4E03AQGxjS1fV1z5zg/profile-displayphoto-shrink_800_800/0?e=1534377600&v=beta&t=5hoPXTLvk73VuYWc1lbC0XY7Enowu-0rSaDgS7GjFIY','Software Engineering',92,0,''),('f557c42a-3e17-4498-bdbe-2663f3092099','Yann','Thibodeau','https://media.licdn.com/dms/image/C4E03AQFtS6wNRrC3bg/profile-displayphoto-shrink_800_800/0?e=1534377600&v=beta&t=7Jr2wfBxCvTR0Y4YCNK4DTcyIaSM9VGNLFPjq9z1Y7M','Computer Science',100,0,'');
 /*!40000 ALTER TABLE `student` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -110,4 +111,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-06-13  3:42:42
+-- Dump completed on 2018-07-22 16:36:05
