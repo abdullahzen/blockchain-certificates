@@ -39,7 +39,7 @@ namespace BlockchainCertificates.Controllers
             var certificate = new Certificate($"{student.FirstName} {student.LastName}", student.Program, student.AvgGrade, student.CertIssueDate);
             using (var certificateStream = certificate.GenerateCert())
             {
-                await _mantleKeeper.KeeperFilesPostAsync(FolderId, certificateStream, $"{student.Id}.bin", Accuracy);
+                await _mantleKeeper.KeeperFilesPostAsync(FolderId, certificateStream, student.Id, Accuracy);
 
                 await student.Update();
 

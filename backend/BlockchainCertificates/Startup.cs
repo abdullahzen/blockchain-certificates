@@ -32,8 +32,11 @@ namespace BlockchainCertificates
 
             services.AddSingleton(async mantleConfig =>
             {
-                var config = new Configuration();
-                var auth = new AuthenticationApi("https://api.mantle.services");
+                var config = new Configuration
+                {
+                    BasePath = "https://api.mantle.services"
+                };
+                var auth = new AuthenticationApi(config);
                 var userResponse = await auth.AuthenticationLoginPostAsync(new UserLoginRequest("mantleEmail", "mantlePass"));
                 config.AddDefaultHeader("Authorization", userResponse.AccessToken);
                 return config;
